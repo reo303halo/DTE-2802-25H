@@ -1,0 +1,40 @@
+@model SimpleMVC.Models.Entities.Car
+
+@{
+    ViewData["Title"] = "Add Car";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <h1>Create</h1>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <label asp-for="CarId">License:</label>
+                <input asp-for="CarId" class="form-control"/>
+                <span asp-validation-for="CarId" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Make">Make:</label>
+                <textarea asp-for="Make" class="form-control"></textarea>
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Model">Model:</label>
+                <textarea asp-for="Model" class="form-control"></textarea>
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Year">Year:</label>
+                <textarea asp-for="Year" class="form-control"></textarea>
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Car</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+    {@{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}}

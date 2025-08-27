@@ -1,0 +1,35 @@
+@model StudentMVC.Models.ViewModel.StudentEditViewModel
+
+@{
+ViewData["Title"] = "Add";
+}
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <h1>Create</h1>
+            <hr />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <label asp-for="Firstname">Firstname:</label>
+                <input asp-for="Firstname" class="form-control"/>
+                <span asp-validation-for="Firstname" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Lastname">Lastname:</label>
+                <input asp-for="Lastname" class="form-control"/>
+                <span asp-validation-for="Lastname" class="text-danger"></span>
+            </div>
+            <br />
+            <div>
+                <select asp-for="DegreeId"
+                        asp-items="@(new SelectList(Model.Degrees, "DegreeId", "Name"))">
+                </select>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">Add student</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+    {@{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}}

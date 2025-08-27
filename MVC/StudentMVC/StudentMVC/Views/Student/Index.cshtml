@@ -1,0 +1,32 @@
+@model IEnumerable<StudentMVC.Models.Entities.Student>
+
+@{
+    ViewData["Title"] = "Students";
+}
+<div class="text-center">
+    <h1 class="display-4">Students</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Degree</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.StudentId</td>
+                <td>@s.Lastname</td>
+                <td>@s.Firstname</td>
+                <td>@s.Degree.Name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    
+    <a href="@Url.Action("Create", "Student")" class="btn btn-primary">Add</a>
+</div>
+
