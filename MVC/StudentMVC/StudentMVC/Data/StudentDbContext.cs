@@ -4,10 +4,10 @@ using StudentMVC.Models.Entities;
 namespace StudentMVC.Data;
 
 // From your home folder, not project folder:
-// dotnet tool install --global dotnet-ef 
+// dotnet tool install --global dotnet-
 
 // From project folder, the folder inside the solution folder:
-// dotnet ef migrations add <name of migration> 
+// dotnet ef migrations add <name of migration>
 // dotnet ef database update
 
 public class StudentDbContext : DbContext
@@ -20,7 +20,7 @@ public class StudentDbContext : DbContext
         
         // SEEDING
         
-        // Degrees
+        // Degrees 
         modelBuilder.Entity<Degree>().HasData(new Degree { DegreeId = 1, Name = "Bachelor" });
         modelBuilder.Entity<Degree>().HasData(new Degree { DegreeId = 2, Name = "Master" });
         modelBuilder.Entity<Degree>().HasData(new Degree { DegreeId = 3, Name = "PhD" });
@@ -33,8 +33,8 @@ public class StudentDbContext : DbContext
         modelBuilder.Entity<Student>().HasData(new Student { StudentId = "ksh087", Firstname = "Kelly", Lastname = "Shaddock", DegreeId = 3});
         modelBuilder.Entity<Student>().HasData(new Student { StudentId = "ono456", Firstname = "Ola", Lastname = "Normann", DegreeId = 1});
     }
-    
-    public StudentDbContext(DbContextOptions<StudentDbContext> options): base(options)
+
+    public StudentDbContext(DbContextOptions<StudentDbContext> options) : base(options)
     {
     }
     

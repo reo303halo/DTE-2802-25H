@@ -1,19 +1,10 @@
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
-using StudentMVC.Data;
-using StudentMVC.Models;
-
+using GarageMVC.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IStudentRepository, StudentRepository>();
-builder.Services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
-
-// Database
-builder.Services.AddDbContext<StudentDbContext>(options =>
-    options.UseSqlite("Data Source=Student.db"));
+builder.Services.AddTransient<ICarRepository, CarRepository>();
 
 var app = builder.Build();
 

@@ -1,19 +1,20 @@
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using CupcakeMVC.Data;
+using CupcakeMVC.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using StudentMVC.Data;
-using StudentMVC.Models;
-
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new Exception("Connection string not found");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IStudentRepository, StudentRepository>();
-builder.Services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+builder.Services.AddTransient<ICupcakeRepository, CupcakeRepository>();
 
-// Database
-builder.Services.AddDbContext<StudentDbContext>(options =>
-    options.UseSqlite("Data Source=Student.db"));
+// DB Services
+builder.Services.AddDbContext<CupcakeDbContext>(options =>
+    options.UseSqlite(connectionString));
+builder.Services.AddDefaultIdentity<IdentityUser>()
+    .AddEntityFrameworkStores<CupcakeDbContext>();
 
 var app = builder.Build();
 

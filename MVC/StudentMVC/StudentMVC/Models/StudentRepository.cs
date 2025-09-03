@@ -14,7 +14,7 @@ public class StudentRepository : IStudentRepository
     {
         _db = db;
     }
-    
+
     public IEnumerable<Student> GetAll()
     {
         var students = _db.Students
@@ -22,7 +22,7 @@ public class StudentRepository : IStudentRepository
             .ToList();
         return students;
     }
-    
+
     public void Save(Student student)
     {
         _db.Students.Add(student);

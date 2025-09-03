@@ -1,0 +1,39 @@
+@model IEnumerable<GarageMVC.Models.Entities.Car>
+
+@{
+    ViewData["Title"] = "Cars";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Cars</h1>
+    @if (Model == null || Model.ToList().Count == 0)
+    {
+        <p>No cars found in your garage.</p>
+    }
+    else
+    {
+        <table class="table table-striped table-bordered">
+            <thead style="background-color: #930606; color: #fff;">
+            <tr>
+                <td>License</td>
+                <td>Make</td>
+                <td>Model</td>
+                <td>Year</td>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var car in Model)
+            {
+                <tr>
+                    <td>@car.LicenseNumber</td>
+                    <td>@car.Make</td>
+                    <td>@car.Model</td>
+                    <td>@car.Year</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    
+    <a href="@Url.Action("Create", "Car")" class="btn btn-primary">Create</a>
+</div>

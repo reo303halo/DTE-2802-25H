@@ -10,8 +10,8 @@ using StudentMVC.Data;
 namespace StudentMVC.Migrations
 {
     [DbContext(typeof(StudentDbContext))]
-    [Migration("20240903124612_init")]
-    partial class init
+    [Migration("20250901230642_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
