@@ -14,7 +14,7 @@ public class CupcakeEditViewModel
     public string? Description { get; set; }
     
     public int SizeId { get; set; }
-    public List<Size> Sizes { get; set; } = [];
+    public List<Size>? Sizes { get; set; }
     public int CategoryId { get; set; }
-    public List<Category> Categories { get; set; } = [];
+    public List<Category>? Categories { get; set; }
 }

@@ -23,6 +23,8 @@ public class CupcakeController(ICupcakeRepository repository) : Controller
     }
     
     // Create : POST
+    [Authorize]
+    [HttpPost]
     public IActionResult Create([Bind("Name,Description,SizeId,CategoryId")] CupcakeEditViewModel cupcake)
     {
         try
@@ -39,13 +41,13 @@ public class CupcakeController(ICupcakeRepository repository) : Controller
             };
             
             repository.Save(c, User);
-            // TempData
+            TempData["Message"] = $"Cupcake with name '{c.Name}' created successfully";
             return RedirectToAction("Index");
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            // TempData
+            TempData["Message"] = "Obs something went wrong";
             return RedirectToAction("Index");
         }
     }

@@ -1,6 +1,7 @@
 using CupcakeMVC.Data;
 using CupcakeMVC.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<ICupcakeRepository, CupcakeRepository>();
+builder.Services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
 // DB Services
 builder.Services.AddDbContext<CupcakeDbContext>(options =>
@@ -30,11 +32,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Cupcake}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();
