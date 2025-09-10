@@ -29,11 +29,13 @@
                 <td>@p.Category.Name</td>
                 <td>@p.Manufacturer.Name</td>
                 <td>
-                    <p>Edit</p>
-                    <p>Delete</p>
+                    <a href="@Url.Action("Edit", "Product", new { id = p.Id })" class="btn btn-primary">Edit</a>
+                    <a href="@Url.Action("Delete", "Product", new { id = p.Id })" onclick = "return confirm('Are you sure want to delete this product?')" class="btn btn-secondary">Delete</a>
                 </td>
             </tr>
         }
         </tbody>
     </table>
+    
+    <a href="@Url.Action("Create", "Product")" class="btn btn-primary">Create</a>
 </div>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using ProductInventory.Data;
 using ProductInventory.Repositories;
@@ -9,6 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddDbContext<ProductDbContext>(options =>
     options.UseSqlite("Data Source=Products.db"));
+builder.Services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
 var app = builder.Build();
 
