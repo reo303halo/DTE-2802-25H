@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using StudentMVC.Models.Entities;
 
@@ -10,7 +11,7 @@ namespace StudentMVC.Data;
 // dotnet ef migrations add <name of migration>
 // dotnet ef database update
 
-public class StudentDbContext : DbContext
+public class StudentDbContext : IdentityDbContext
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
