@@ -25,6 +25,7 @@ public class ComputerController : ControllerBase
         return Ok(result); // 200: Ok
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
     public IActionResult Get([FromRoute] int id)
     {
