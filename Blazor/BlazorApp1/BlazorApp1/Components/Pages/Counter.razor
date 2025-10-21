@@ -1,0 +1,22 @@
+﻿@page "/counter"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle> <!--This is a component-->
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @_currentCount</p>
+<p role="status">Second count: @_secondCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    private int _currentCount;
+    private int _secondCount;
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+        _secondCount = _currentCount + 2;
+    }
+}

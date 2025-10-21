@@ -1,0 +1,65 @@
+@page "/todoList"
+@using TodoApp.Data.Models
+@rendermode InteractiveServer
+
+@if (_todoItems.Count == 0)
+{
+    <div class="text-center">
+        <p><em>Loading...</em></p>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var item in _todoItems)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text">
+                                <input type=checkbox @bind="item.IsDone"> @(item.IsDone ? "Completed" : "Pending")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    
+    <input @bind="@_newTodo">
+    <button @onclick="AddTodo">Add todo</button>
+}
+
+@code {
+    private List<TodoItem> _todoItems = [];
+    string _newTodo = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate async loading...
+        await Task.Delay(1000);
+
+        var names = new[] { "Feed the cat", "Clean the house", "Call grandpa" };
+        var isDone = new[] { true, false, true };
+        
+        // Fetch from API (static for now)
+        _todoItems = Enumerable.Range(0, names.Length).Select(index => new TodoItem
+        {
+            Id = index,
+            Name = names[index],
+            IsDone = isDone[index]
+        }).ToList();
+    }
+
+    private void AddTodo()
+    {
+        if (string.IsNullOrWhiteSpace(_newTodo)) return;
+        _todoItems.Add(new TodoItem { Name = _newTodo, IsDone = false });
+        
+        // Use API to add new item to server
+
+        _newTodo = "";
+    }
+}
