@@ -1,11 +1,14 @@
 @page "/todoList"
 @using TodoApp.Data.Models
+@inject HttpClient Client
 @rendermode InteractiveServer
+
+<h3 class="text-center my-4">Todo List (@_todoItems.Count(t => !t.IsDone))</h3>
 
 @if (_todoItems.Count == 0)
 {
     <div class="text-center">
-        <p><em>Loading...</em></p>
+        <p><em>No tasks.</em></p>
     </div>
 }
 else
@@ -35,31 +38,29 @@ else
 @code {
     private List<TodoItem> _todoItems = [];
     string _newTodo = "";
+    const string Url = "https://localhost:7122/api/Todo"; // Change to your APIs url
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate async loading...
-        await Task.Delay(1000);
-
-        var names = new[] { "Feed the cat", "Clean the house", "Call grandpa" };
-        var isDone = new[] { true, false, true };
-        
-        // Fetch from API (static for now)
-        _todoItems = Enumerable.Range(0, names.Length).Select(index => new TodoItem
-        {
-            Id = index,
-            Name = names[index],
-            IsDone = isDone[index]
-        }).ToList();
+        var todoArray = await Client.GetFromJsonAsync<TodoItem[]>(Url);
+        if (todoArray != null) _todoItems = todoArray.ToList();
     }
 
-    private void AddTodo()
+    private async Task AddTodo()
     {
         if (string.IsNullOrWhiteSpace(_newTodo)) return;
-        _todoItems.Add(new TodoItem { Name = _newTodo, IsDone = false });
-        
-        // Use API to add new item to server
 
-        _newTodo = "";
+        var newItem = new TodoItem { Name = _newTodo, IsDone = false };
+        var response = await Client.PostAsJsonAsync(Url, newItem);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _todoItems.Add(newItem); // Add to the local list
+            _newTodo = ""; // Clear the input field
+        }
+        else
+        {
+            // Handle error
+        }
     }
 }
