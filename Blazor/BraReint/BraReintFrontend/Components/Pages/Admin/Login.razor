@@ -1,0 +1,47 @@
+@page "/login"
+@using BraReintFrontend.Data.Models
+@using BraReintFrontend.Services.AuthServices
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Login</PageTitle>
+
+<div class="text-center">
+    <h1 class="display-4">Login</h1>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+    <div class="alert alert-danger">@_error</div>
+}
+
+<EditForm Model="@_loginModel" OnValidSubmit="HandleValidSubmit" FormName="LoginForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <label for="username" class="form-label">Username</label>
+        <InputText @bind-Value="_loginModel.Username" class="form-control" id="username"/>
+    </div>
+    <div class="mb-2">
+        <label for="password" class="form-label">Password</label>
+        <InputText @bind-Value="_loginModel.Password" type="password" class="form-control" id="password" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+@code {
+    private readonly LoginDto _loginModel = new();
+    private string _error = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        var success = await AuthService.LoginAsync(_loginModel);
+        if (success)
+            Navigation.NavigateTo("/admin/dashboard");
+        else
+            _error = "Login failed. Please check your credentials.";
+    }
+}

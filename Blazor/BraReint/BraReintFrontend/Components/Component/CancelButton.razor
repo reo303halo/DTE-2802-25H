@@ -1,0 +1,16 @@
+@using BraReintFrontend.Services
+@inject NavigationManager Navigation
+@inject ISessionService SessionService
+
+<button type="button" class="btn btn-secondary ms-2" @onclick="HandleCancel">@ButtonText</button>
+
+@code {
+    [Parameter]
+    public string ButtonText { get; set; } = "Cancel"; // Standard tekst er "Cancel"
+
+    private async Task HandleCancel()
+    {
+        await SessionService.ClearSessionAsync();
+        Navigation.NavigateTo("/"); // Naviger tilbake til hjemmesiden
+    }
+}

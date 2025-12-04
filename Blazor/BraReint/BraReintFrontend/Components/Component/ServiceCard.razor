@@ -1,0 +1,30 @@
+@using BraReintFrontend.Data.Models
+@inject NavigationManager Navigation
+
+<div class="card h-100 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">@Service.TypeName</h5>
+        <p class="card-text">@Service.Description</p>
+        @if (ShowPrice)
+        {
+            <p class="card-text">@Service.Price NOK</p>
+        }
+        
+
+        @if (IsAdmin)
+        {
+            <div class="d-flex justify-content-between mt-3">
+                <button class="btn btn-sm btn-warning" @onclick="() => OnEdit.InvokeAsync(Service)">Edit</button>
+                <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(Service.Id)">Delete</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public BookingType Service { get; set; } = default!;
+    [Parameter] public bool ShowPrice { get; set; }
+    [Parameter] public bool IsAdmin { get; set; }
+    [Parameter] public EventCallback<BookingType> OnEdit { get; set; }
+    [Parameter] public EventCallback<int> OnDelete { get; set; }
+}

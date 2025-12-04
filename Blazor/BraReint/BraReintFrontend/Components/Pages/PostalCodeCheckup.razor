@@ -1,0 +1,72 @@
+@page "/PostalCodeCheckup"
+@using BraReintFrontend.Data.Models
+@rendermode InteractiveServer
+@inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
+@inject HttpClient Client
+
+<PageTitle>Sjekk Postnummer</PageTitle>
+
+<div class="container mt-5">
+    <div class="text-center checkup-page">
+        <h1 class="display-3 mb-3">Skriv inn ditt postnummer</h1>
+        <p class="lead fs-4">Vi sjekker om vi tilbyr tjenester i ditt område</p>
+
+        <div class="d-flex justify-content-center mt-4">
+            <EditForm Model="@_postalCodeModel" OnValidSubmit="@HandleValidSubmit" style="width: 100%; max-width: 500px;">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-4">
+                    <label for="postalCode" class="form-label fs-5">Norsk postnummer (4 siffer):</label>
+                    <InputText @bind-Value="_postalCodeModel.Code"
+                               id="postalCode"
+                               class="form-control form-control-lg text-center fs-4"
+                               inputmode="numeric"
+                               maxlength="4" />
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100">Sjekk tilgjengelighet</button>
+
+                @if (_showInvalidCodeMessage)
+                {
+                <div class="alert alert-danger mt-4 fs-5">
+                    Postnummeret <strong>@_postalCodeModel.Code</strong> er dessverre ikke i vårt tjenesteområde.
+                </div>
+                }
+            </EditForm>
+        </div>
+
+    </div>
+</div>
+
+
+@code {
+    private readonly PostalCode _postalCodeModel = new();
+    private List<string> _allowedPostalCodes = [];
+    private bool _showInvalidCodeMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var codesList = await Client.GetFromJsonAsync<PostalCode[]>("PostalCode");
+        if (codesList != null)
+        {
+            _allowedPostalCodes = codesList.Select(p => p.Code).ToList();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _showInvalidCodeMessage = false;
+
+        if (_allowedPostalCodes.Contains(_postalCodeModel.Code))
+        {
+            await JsRuntime.InvokeVoidAsync("sessionStorage.setItem", "selectedPostalCode", _postalCodeModel.Code);
+            Navigation.NavigateTo("/TempBookingPage");
+        }
+        else
+        {
+            _showInvalidCodeMessage = true;
+        }
+    }
+}

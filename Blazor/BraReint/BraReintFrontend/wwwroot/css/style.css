@@ -1,0 +1,91 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: white radial-gradient(circle at top right, powderblue 10%, transparent 35%) no-repeat fixed;
+    background-size: cover;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.nav-scrollable {
+    background: linear-gradient(to bottom, powderblue, #003366); /* Adjust colors */
+}
+
+.nav-link.custom {
+    color: black !important; /* Ensures it stays black */
+    font-weight: bold; /* Makes text bold */
+    text-decoration: none !important; /* Removes underline */
+}
+
+.nav-link.custom:hover {
+    text-decoration: none !important; /* Prevents hover effects */
+    color: black !important; /* Keeps color unchanged on hover */
+}
+
+.navbar-toggler {
+    background-color: #003366; /* Dark blue */
+    border: 2px solid #003366; /* Match background */
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-toggler::before {
+     /* Unicode hamburger menu icon content: "\2630";*/
+    color: #003366; /* White icon */
+    font-size: 24px;
+    text-align: center;
+}
+
+.navbar-toggler:checked {
+    background-color: #bdbdbd; /* White background when checked */
+    border: 2px solid #003366; /* Blue border */
+}
+
+.navbar-toggler:checked::before {
+     /* Unicode close (X) icon content: "\2715";*/
+    color: #003366; /* Blue icon */
+}
+
+html, body {
+    height: 100%;
+}
+
+.nav-scrollable {
+    min-height: 100%;
+}
+
+.btn-primary {
+    background-color: #003366; /* Dark Blue */
+    border: none;
+}
+.alert-danger {
+    background-color: rgba(255, 0, 0, 0.8); /* Softer red */
+    color: white;
+}
+
+#postalCode {
+    width: 120px; /* Keeps it compact */
+    border-radius: 8px; /* Slight rounding */
+    text-align: center; /* Centers the digits */
+    display: block;
+    margin: 0 auto; /* Ensures it sits in the center */
+}
+
+.checkup-page h1 {
+    font-size: 3rem; /* Boost heading size */
+}
+
+.checkup-page p {
+    font-size: 1.4rem; /* Larger paragraph text */
+}
+

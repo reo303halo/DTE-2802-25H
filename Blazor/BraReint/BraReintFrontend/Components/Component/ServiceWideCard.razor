@@ -1,0 +1,22 @@
+@using BraReintFrontend.Data.Models
+@inherits LayoutComponentBase
+
+<div class="card mb-4 shadow-sm flex-md-row">
+    <div class="col-md-4 p-0">
+        <img src="@Service.ImageUrl" class="img-fluid h-100 w-100 object-fit-cover rounded-start" alt="@Service.Title" />
+    </div>
+    <div class="col-md-8 d-flex flex-column p-4">
+        <h4>@Service.Title</h4>
+
+        <p class="fs-4">
+            <span class="text-primary fw-semibold">Pris fra</span>
+            <span class="ms-2">@Service.Price,-</span>
+        </p>
+
+        <!--<a class="btn btn-outline-primary mt-auto align-self-start" href="@Service.Url">Les mer</a>-->
+    </div>
+</div>
+
+@code {
+    [Parameter] public ServiceItem Service { get; set; } = new();
+}

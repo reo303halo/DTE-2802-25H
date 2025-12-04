@@ -1,0 +1,106 @@
+@page "/ServiceList"
+@using BraReintFrontend.Data.Models
+@using BraReintFrontend.Components.Component
+
+<PageTitle>Tjenester</PageTitle>
+
+<div class="container mt-5">
+    <h1 class="display-4 text-center">Våre Tjenester</h1>
+    <p class="lead text-center mb-4">Dette er tjenestene vi tilbyr for øyeblikket:</p>
+
+    <div>
+        @foreach (var service in _serviceList)
+        {
+            <ServiceWideCard Service="@service" />
+        }
+    </div>
+</div>
+
+@code {
+    private readonly List<ServiceItem> _serviceList =
+    [
+        new ServiceItem
+        {
+            Title = "Vindusvask med rentvannsystem (water fed pole) – opp til 15 meter uten stige",
+            Price = 599,
+            ImageUrl = "images/water_fed_pole.jpg",
+            Url = "/"
+        },
+
+        new ServiceItem
+        {
+            Title = "Solcellepanelvask – skånsomt og effektivt for bedre effekt og levetid",
+            Price = 599,
+            ImageUrl = "images/solar_wash.jpg",
+            Url = "/"
+        },
+
+        new ServiceItem
+        {
+            Title = "Høytrykkspyling – av innkjørsel, gårdsplass, murer, trapper, m.m.",
+            Price = 699,
+            ImageUrl = "images/ground_wash.jpg",
+            Url = "/"
+        },
+        
+        new ServiceItem
+        {
+            Title = "Rens av takrenner – for å sikre god drenering",
+            Price = 799,
+            ImageUrl = "images/roof_wash.jpg",
+            Url = "/"
+        },
+        
+        new ServiceItem
+        {
+            Title = "Rens og vask av søppelbøtter",
+            Price = 259,
+            ImageUrl = "images/bin_wash.jpg",
+            Url = "/"
+        },
+        
+        new ServiceItem
+        {
+            Title = "Vask og behandling av belegningsstein og mur",
+            Price = 70,
+            ImageUrl = "images/bin_wash.jpg",
+            Url = "/"
+        },
+        
+        new ServiceItem
+        {
+            Title = "Rens av ventilasjonskanaler",
+            Price = 990,
+            ImageUrl = "images/bin_wash.jpg",
+            Url = "/"
+        },
+        
+        new ServiceItem
+        {
+            Title = "Fasadevask og takvask - med lavvtrykk/softwash",
+            Price = 79,
+            ImageUrl = "images/bin_wash.jpg",
+            Url = "/"
+        },
+        
+        new ServiceItem
+        {
+            Title = "Impregnering og påfylling av fugesand",
+            Price = 40,
+            ImageUrl = "images/bin_wash.jpg",
+            Url = "/"
+        }
+    ];
+    
+    /*
+    private List<BookingType> _serviceList = [];
+    
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        var typesList = await Client.GetFromJsonAsync<BookingType[]>("BookingType");
+        if (typesList != null) _serviceList = typesList.ToList();
+    }
+    */
+}

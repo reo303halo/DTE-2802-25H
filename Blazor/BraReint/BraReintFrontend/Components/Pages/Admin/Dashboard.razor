@@ -1,0 +1,34 @@
+@page "/admin/dashboard"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+<h3 class="mb-4">Dashboard</h3>
+
+<p>Welcome to the admin dashboard. Use the buttons below to manage system data.</p>
+
+<div class="d-grid gap-3 mt-4" style="max-width: 300px;">
+    <button class="btn btn-primary" @onclick='() => NavigateTo("/admin/editDates")'>
+    Edit Available Dates
+    </button>
+    <button class="btn btn-secondary" @onclick='() => NavigateTo("/admin/editPostal")'>
+    Edit Postal Codes
+    </button>
+    <button class="btn btn-info" @onclick='() => NavigateTo("/admin/editServices")'>
+    Edit Services
+    </button>
+</div>
+
+@code {
+    private void NavigateTo(string url)
+    {
+        Console.WriteLine($"Navigate to {url}");
+        Navigation.NavigateTo(url);
+    }
+
+    // Add in top later
+    // @using Microsoft.AspNetCore.Authorization
+    // @attribute [Authorize]
+}

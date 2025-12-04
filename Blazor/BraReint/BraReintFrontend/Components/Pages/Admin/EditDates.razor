@@ -1,0 +1,87 @@
+@page "/admin/editDates"
+@using BraReintFrontend.Data.Models.ViewModels
+@inject HttpClient Client
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Administrer Tilgjengelighet</PageTitle>
+
+<h3 class="mb-4">Administrer Datoer</h3>
+
+<div class="mb-3">
+    <label for="datePicker">Velg en dato:</label>
+    <InputDate @bind-Value="_selectedDate" id="datePicker" class="form-control" />
+</div>
+
+@if (_availableDates.Contains(_selectedDate.Date))
+{
+    <div class="alert alert-success">Denne datoen er tilgjengelig.</div>
+}
+else
+{
+    <div class="alert alert-danger">Denne datoen er ikke tilgjengelig.</div>
+}
+
+<div class="form-check mb-3">
+    <InputCheckbox @bind-Value="_isAvailableOverride" class="form-check-input" id="availabilityCheck" />
+    <label class="form-check-label" for="availabilityCheck">
+        Sett som tilgjengelig uansett
+    </label>
+</div>
+
+<button class="btn btn-primary mb-3" @onclick="SaveSpecialDate">Lagre</button>
+
+<hr />
+
+<h5>Spesielt satt tilgjengelighet:</h5>
+<ul>
+    @foreach (var date in _specialDates.OrderBy(d => d.Date))
+    {
+        <li>
+            @date.Date.ToShortDateString(): 
+            <strong>@(date.IsAvailable ? "Tilgjengelig" : "Ikke tilgjengelig")</strong>
+        </li>
+    }
+</ul>
+
+@code {
+    private DateTime _selectedDate = DateTime.Today;
+    private bool _isAvailableOverride = true;
+
+    private List<DateTime> _availableDates = [];
+    private List<SpecialAvailabilityDate> _specialDates = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _availableDates = await Client.GetFromJsonAsync<List<DateTime>>("Availability/available-dates") ?? [];
+        _specialDates = await Client.GetFromJsonAsync<List<SpecialAvailabilityDate>>("Availability/special-dates") ?? [];
+    }
+
+    private async Task SaveSpecialDate()
+    {
+        var specialDate = new SpecialAvailabilityDate
+        {
+            Date = _selectedDate.Date,
+            IsAvailable = _isAvailableOverride
+        };
+
+        var response = await Client.PostAsJsonAsync("Availability/special-date", specialDate);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var updated = await response.Content.ReadFromJsonAsync<SpecialAvailabilityDate>();
+            var existing = _specialDates.FirstOrDefault(d => d.Date.Date == updated.Date.Date);
+
+            if (existing != null)
+                existing.IsAvailable = updated.IsAvailable;
+            else
+                _specialDates.Add(updated);
+
+            await JsRuntime.InvokeVoidAsync("alert", "Overstyring lagret!");
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("alert", "Kunne ikke lagre overstyring.");
+        }
+    }
+}

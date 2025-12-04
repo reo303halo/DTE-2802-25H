@@ -1,0 +1,114 @@
+@page "/admin/editServices"
+@using BraReintFrontend.Data.Models
+@using System.Net
+@using BraReintFrontend.Data.Models.ViewModels
+@using BraReintFrontend.Components.Component
+@inject HttpClient Client
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Admin - Tjenester</PageTitle>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Administrer Tjenester</h2>
+
+    @if (_serviceList.Count == 0)
+    {
+    <div>Laster inn tjenester...</div>
+    }
+    else
+    {
+    <div class="row">
+        @foreach (var service in _serviceList)
+        {
+        <ServiceCard Service="service" OnDelete="DeleteService" IsAdmin="true" ShowPrice="true" />
+        }
+    </div>
+    }
+
+    <hr />
+    <h4 class="mt-4">Legg til ny tjeneste</h4>
+
+    <EditForm Model="@_newService" OnValidSubmit="HandleAddService">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Navn</label>
+            <InputText @bind-Value="_newService.TypeName" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Beskrivelse</label>
+            <InputTextArea @bind-Value="_newService.Description" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Pris (kr)</label>
+            <InputNumber @bind-Value="_newService.Price" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">➕ Legg til</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(_formMessage))
+    {
+    <div class="alert alert-info mt-2">@_formMessage</div>
+    }
+</div>
+
+@code {
+    private List<BookingType> _serviceList = [];
+    private CreateBookingTypeViewModel _newService = new();
+    private string _formMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshServices();
+    }
+
+    private async Task RefreshServices()
+    {
+        var typesList = await Client.GetFromJsonAsync<BookingType[]>("BookingType");
+        if (typesList != null)
+        {
+            _serviceList = typesList.ToList();
+        }
+    }
+
+    private async Task DeleteService(int id)
+    {
+        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Er du sikker på at du vil slette denne tjenesten?");
+        if (!confirm) return;
+
+        var response = await Client.DeleteAsync($"BookingType/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            _serviceList = _serviceList.Where(s => s.Id != id).ToList();
+        }
+    }
+
+    private async Task HandleAddService()
+    {
+        _formMessage = "";
+
+        var response = await Client.PostAsJsonAsync("BookingType", _newService);
+
+        if (response.IsSuccessStatusCode)
+        {
+            _formMessage = "Ny tjeneste ble lagt til!";
+            _newService = new CreateBookingTypeViewModel();
+            await RefreshServices();
+        }
+        else if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            _formMessage = "Denne tjenesten finnes allerede.";
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            _formMessage = $"Noe gikk galt: {error}";
+        }
+    }
+
+}

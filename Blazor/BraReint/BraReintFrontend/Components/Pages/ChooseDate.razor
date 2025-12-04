@@ -1,0 +1,73 @@
+@page "/ChooseDate"
+@using BraReintFrontend.Components.Component
+@using BraReintFrontend.Helpers
+@inject HttpClient Client
+@inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Velg Dato</PageTitle>
+
+<h1 class="text-center my-4">Velg Dato</h1>
+
+<p>Tilgjengelige datoer:</p>
+
+@if (_dates.Count == 0)
+{
+    <div class="text-center">
+        <p><em>Laster inn...</em></p>
+        <p><em>...Hvis det tar for lang tid, kan det ha oppstått en feil...</em></p>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var date in _dates)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card @(_selectedDate == date ? "border-primary" : "")" style="border-width: 4px;">
+                        <div class="card-body" @onclick="() => SelectDate(date)">
+                            <h5 class="card-title">@DateHelpers.FormatDate(date)</h5>
+                            <p class="card-text">@DateHelpers.GetWeekday(date)</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div> 
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" @onclick="ConfirmDate"
+                disabled="@(_selectedDate == null)">
+            Gå videre til neste steg
+        </button>
+        <CancelButton ButtonText="Avbryt"/>
+    </div>
+}
+
+@code {
+    private List<string> _dates = [];
+    private string? _selectedDate;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var typesList = await Client.GetFromJsonAsync<string[]>("Availability/available-dates");
+        if (typesList != null) _dates = typesList.ToList();
+    }
+
+    private void SelectDate(string date)
+    {
+        _selectedDate = date;
+        StateHasChanged();
+    }
+
+    private async Task ConfirmDate()
+    {
+        if (_selectedDate != null)
+        {
+            await JsRuntime.InvokeVoidAsync("sessionStorage.setItem", "selectedDate", _selectedDate);
+            Navigation.NavigateTo("/ConfirmBooking");
+        }
+    }
+}

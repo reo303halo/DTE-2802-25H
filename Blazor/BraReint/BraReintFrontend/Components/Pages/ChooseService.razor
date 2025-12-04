@@ -1,0 +1,87 @@
+@page "/ChooseService"
+@using System.Globalization
+@using BraReintFrontend.Data.Models
+@using BraReintFrontend.Components.Component
+@inject HttpClient Client
+@inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
+@rendermode InteractiveServer
+
+<PageTitle>Velg Tjeneste</PageTitle>
+
+<h1 class="text-center my-4">Velg Tjeneste(r)</h1>
+
+<p>Dette er tjenestene vi tilbyr for øyeblikket:</p>
+
+@if (_services.Count == 0)
+{
+    <div class="text-center">
+        <p><em>Laster inn...</em></p>
+        <p><em>...Hvis det tar for lang tid, kan det ha oppstått en feil...</em></p>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var service in _services)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card @(_selectedServiceIds.Contains(service.Id) ? "border-primary" : "")" 
+                         style="border-width: 4px; cursor: pointer;"
+                         @onclick="() => ToggleSelection(service.Id, !_selectedServiceIds.Contains(service.Id))">
+                        <div class="card-body">
+                            <h5 class="card-title">@service.TypeName</h5>
+                            <p class="card-text">@service.Description</p>
+                            <p class="card-text">Estimert pris: @FormatPrice(service.Price)</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <button class="btn btn-primary" @onclick="ConfirmSelection"
+                disabled="@(_selectedServiceIds.Count == 0)">
+            Gå videre for å velge dato
+        </button>
+        <CancelButton ButtonText="Avbryt"/>
+    </div>
+}
+
+@code {
+    private List<BookingType> _services = [];
+    private readonly List<int> _selectedServiceIds = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var typesList = await Client.GetFromJsonAsync<BookingType[]>("BookingType");
+        if (typesList != null) _services = typesList.ToList();
+    }
+
+    private static string FormatPrice(decimal price)
+    {
+        return price.ToString("C", new CultureInfo("nb-NO")); // Norsk format
+    }
+
+    private void ToggleSelection(int serviceId, bool isChecked)
+    {
+        if (isChecked)
+        {
+            if (!_selectedServiceIds.Contains(serviceId))
+                _selectedServiceIds.Add(serviceId);
+        }
+        else
+        {
+            _selectedServiceIds.Remove(serviceId);
+        }
+    }
+
+    private async Task ConfirmSelection()
+    {
+        await JsRuntime.InvokeVoidAsync("sessionStorage.setItem", "selectedServices",
+            string.Join(",", _selectedServiceIds));
+        Navigation.NavigateTo("/ChooseDate");
+    }
+}

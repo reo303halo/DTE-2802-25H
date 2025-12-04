@@ -1,0 +1,121 @@
+@page "/ConfirmBooking"
+@using BraReintFrontend.Data.Models
+@using BraReintFrontend.Components.Component
+@using BraReintFrontend.Helpers
+@using BraReintFrontend.Services
+@inject HttpClient Client
+@inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
+@inject ISessionService SessionService
+@rendermode InteractiveServer
+
+@if (!_isLoaded)
+{
+<div class="text-center">
+    <p><em>Laster inn...</em></p>
+</div>
+}
+else
+{
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Bekreft Bestillingen Din</h2>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <h4>Valgt Dato og Postnummer</h4>
+                <p><strong>Dato:</strong> @(DateHelpers.GetWeekday(_formModel.StartDate)), @(DateHelpers.FormatDate(_formModel.StartDate))</p>
+                <p><strong>Postnummer:</strong> @(_formModel.PostalCode)</p>
+            </div>
+        </div>
+
+        <EditForm Model="@_formModel" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">E-post:</label>
+                <InputText id="email" type="email" class="form-control" @bind-Value="_formModel.Email" />
+                <ValidationMessage For="@(() => _formModel.Email)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="firstName" class="form-label">Fornavn:</label>
+                <InputText id="firstName" class="form-control" @bind-Value="_formModel.FirstName" />
+                <ValidationMessage For="@(() => _formModel.FirstName)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Etternavn:</label>
+                <InputText id="lastName" class="form-control" @bind-Value="_formModel.LastName" />
+                <ValidationMessage For="@(() => _formModel.LastName)" />
+            </div>
+            
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telefonnummer:</label>
+                <InputText id="phone" type="tel" class="form-control" @bind-Value="_formModel.PhoneNumber" inputmode="numeric" maxlength="15" />
+                <ValidationMessage For="@(() => _formModel.PhoneNumber)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="street" class="form-label">Gateadresse:</label>
+                <InputText id="street" class="form-control" @bind-Value="_formModel.Street" />
+                <ValidationMessage For="@(() => _formModel.Street)" />
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary">Send inn</button>
+                <CancelButton/>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    private readonly Customer _formModel = new();
+    private List<int> _selectedServiceIds = [];
+    private bool _isLoaded;
+
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadSessionData();
+            _isLoaded = true;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task LoadSessionData()
+    {
+        _formModel.PostalCode = await JsRuntime.InvokeAsync<string>("sessionStorage.getItem", "selectedPostalCode");
+        _formModel.StartDate = await JsRuntime.InvokeAsync<string>("sessionStorage.getItem",  "selectedDate");
+        var servicesString = await JsRuntime.InvokeAsync<string>("sessionStorage.getItem", "selectedServices");
+
+        if (!string.IsNullOrEmpty(servicesString))
+        {
+            _selectedServiceIds = servicesString.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Trim())
+                .Where(s => int.TryParse(s, out _))
+                .Select(int.Parse)
+                .ToList();
+        }
+
+        _formModel.TypeIds = _selectedServiceIds;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await Client.PostAsJsonAsync("Bookings", _formModel);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await SessionService.ClearSessionAsync();
+            Navigation.NavigateTo("/Confirmation");
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Skjema sending mislyktes. Statuskode: {response.StatusCode}, Feilmelding: {errorMessage}");
+        }
+    }
+}
